@@ -2,7 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Linq; // List 셔플을 위해 필요합니다.
+using System.Linq;
+using TMPro; // List 셔플을 위해 필요합니다.
 
 public class CardGameManager : MonoBehaviour
 {
@@ -15,6 +16,9 @@ public class CardGameManager : MonoBehaviour
 
     [Header("게임 로직")]
     public float flipBackDelay = 1.0f; // 짝이 틀렸을 때 다시 뒤집어지는 대기 시간
+    
+    [Header("UI")]
+    public TMP_Text tryText;
 
     // --- 내부 상태 ---
     private List<Card> allCards = new List<Card>(); // 생성된 모든 카드 오브젝트 리스트
@@ -22,6 +26,7 @@ public class CardGameManager : MonoBehaviour
     private int totalPairs; // 총 짝의 개수
     private int matchesFound = 0; // 현재까지 맞춘 짝의 개수
     private bool isChecking = false; // 현재 짝 검사 코루틴이 진행 중인지 여부
+    private int tryCount;
 
     // --- 초기화 ---
     void Start()
@@ -32,7 +37,8 @@ public class CardGameManager : MonoBehaviour
             Debug.LogError("보드 크기 또는 카드 스프라이트 개수가 유효하지 않습니다.");
             return;
         }
-
+        
+        tryText.text = "Try Match Count: " + tryCount;
         totalPairs = (boardSize * boardSize) / 2;
         GenerateBoard();
     }
@@ -141,6 +147,8 @@ public class CardGameManager : MonoBehaviour
             card2.Flip(false); // 뒷면으로
         }
 
+        tryCount++;
+        tryText.text = "Try Match Count: " + tryCount;
         // 다음 턴을 위해 뒤집힌 카드 리스트를 비우고 상태를 초기화합니다.
         flippedCards.Clear();
         isChecking = false;
